@@ -1,0 +1,19 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "billboard-top-100": "^2.5.9",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "genius-lyrics": "^4.2.9",
+    "genius-lyrics-fetcher": "^2.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}

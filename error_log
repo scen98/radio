@@ -1,0 +1,3 @@
+[21-May-2021 05:45:03 Europe/Budapest] PHP Warning:  mysqli::__construct(): Error while reading greeting packet. PID=297423 in /home/szbencli/public_html/radio/DBINFO.php on line 14
+[21-May-2021 05:45:03 Europe/Budapest] PHP Warning:  mysqli::__construct(): (HY000/2006): MySQL server has gone away in /home/szbencli/public_html/radio/DBINFO.php on line 14
+[21-May-2021 05:45:03 Europe/Budapest] PHP Warning:  mysqli::set_charset(): Couldn't fetch mysqli in /home/szbencli/public_html/radio/DBINFO.php on line 15

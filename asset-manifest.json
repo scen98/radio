@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/radio/static/css/main.31d50cb9.chunk.css",
+    "main.js": "/radio/static/js/main.5a816f66.chunk.js",
+    "main.js.map": "/radio/static/js/main.5a816f66.chunk.js.map",
+    "runtime-main.js": "/radio/static/js/runtime-main.9bc486e5.js",
+    "runtime-main.js.map": "/radio/static/js/runtime-main.9bc486e5.js.map",
+    "static/js/2.329ee2a5.chunk.js": "/radio/static/js/2.329ee2a5.chunk.js",
+    "static/js/2.329ee2a5.chunk.js.map": "/radio/static/js/2.329ee2a5.chunk.js.map",
+    "static/js/3.ee6020d7.chunk.js": "/radio/static/js/3.ee6020d7.chunk.js",
+    "static/js/3.ee6020d7.chunk.js.map": "/radio/static/js/3.ee6020d7.chunk.js.map",
+    "index.html": "/radio/index.html",
+    "static/css/main.31d50cb9.chunk.css.map": "/radio/static/css/main.31d50cb9.chunk.css.map",
+    "static/js/2.329ee2a5.chunk.js.LICENSE.txt": "/radio/static/js/2.329ee2a5.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/radio/static/media/klavika-regular.cd625feb.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9bc486e5.js",
+    "static/js/2.329ee2a5.chunk.js",
+    "static/css/main.31d50cb9.chunk.css",
+    "static/js/main.5a816f66.chunk.js"
+  ]
+}

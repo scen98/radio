@@ -1,0 +1,67 @@
+{
+    "shows" : [
+    {
+        "name" : "Rádió 1 Éjszaka",
+        "desc" : "Csak a legfrissebb igazi mai slágerek, magyar kedvenceinkkel vegyítve!",
+        "start" : 0,
+        "end" : 6,
+        "days" : [ 0, 1, 2, 3, 4, 5, 6 ]
+    },
+    {
+        "name" : "Igazi Mai Slágerek",
+        "desc" : "A Rádió 1 igazi mai slágerei változatosan!",
+        "start" : 6,
+        "end" : 17,
+        "days" : [ 1, 2, 3, 4, 5 ]
+    },
+    {
+        "name" : "Igazi Mai Slágerek",
+        "desc" : "A Rádió 1 igazi mai slágerei változatosan!",
+        "start" : 14,
+        "end" : 17,
+        "days" : [ 6, 0 ]
+    },
+    {
+        "name" : "Rádió 1 Hétvége",
+        "desc" : "Mindenünk, amink csak van: A legújabbtól a legrégebbi igazi mai slágerekig, magyar kedvenceinkkel vegyítve.",
+        "start": 6,
+        "end": 14,
+        "days": [ 6, 0 ]
+    },
+    {
+        "name" : "Rádió 1 Live Mix",
+        "desc" : "1 órás élő mix Juhász Gerivel, és Lotfi Begivel!",
+        "start" : 17,
+        "end" : 18,
+        "days" : [ 1, 2, 3, 4, 5]
+    },
+    {
+        "name" : "Cooky Weekend Show",
+        "desc" : "Cooky 1 órán át mixeli nektek élőben az igazi mai slágereket! Szombaton Before Party Show, vasárnap pedig After Party Show!",
+        "start" : 17,
+        "end" : 18,
+        "days" : [ 6, 0 ]
+    },
+    {
+        "name" : "Igazi Mai Slágerek",
+        "desc" : "A Rádió 1 igazi mai slágerei változatosan!",
+        "start" : 18,
+        "end" : 20,
+        "days" : [ 0, 1, 2, 3, 4, 5, 6 ]
+    },
+    {
+        "name" : "Esti Mix",
+        "desc" : "Dávid által készített 1 órás mix az igazi mai slágerekkel!",
+        "start" : 20,
+        "end" : 21,
+        "days" : [ 0, 1, 2, 3, 4, 5, 6 ]
+    },
+    {
+        "name" : "World Is Mine Radio Show",
+        "desc" : "Minden este, az ország legjobb lemezlovasaival!",
+        "start" : 21,
+        "end" : 24,
+        "days" : [ 0, 1, 2, 3, 4, 5, 6 ]
+    }
+    ]
+}
