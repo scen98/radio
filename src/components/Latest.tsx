@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState} from 'react'
-import { getCaller } from '../model/caller';
+import { useGET } from '../customHooks';
 import { ITrack, trackFactory } from '../model/track';
 import Track from './Track';
 import TrackRow from './TrackRow';
@@ -10,17 +10,15 @@ interface ILatest{
 }
 
 export const Latest: React.FC<ILatest> = ({limit}) => {
-    const [latestCaller, signal] = getCaller(`/radio/api/newesttracksapi.php?limit=${limit}`);
+    const fetchData = useGET(`/radio/api/newesttracksapi.php?limit=${limit}`);
     const [latest, setLatest] = useState<ITrack[]>([]);
+    
     useEffect(()=>{
         requestLatest();
-        return()=>{
-            signal.abort();
-        }
     }, []);
 
     const requestLatest = async ()=>{
-        const trackData = await latestCaller();
+        const trackData = await fetchData();
         if(trackData){
             setLatest(trackFactory(trackData));
         }

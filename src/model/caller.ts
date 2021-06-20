@@ -8,27 +8,6 @@ export async function GETAsynch(url: string): Promise<Response>{
     return response;
 }
 
-export async function POSTAsynch(url: string, data: any){
-    const response = await fetch(def + url, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin', 
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    redirect: 'follow', 
-    referrerPolicy: 'no-referrer', 
-    body: JSON.stringify(data) 
-    });
-    if(response.ok){
-        return response;
-    } else {
-        console.log(response);
-        return response;
-    }
-} 
-
 export async function uploadFile(url?: string, data?: FormData): Promise<Response>{
     const response = await fetch(def +url, {
         method: "POST",
@@ -41,80 +20,6 @@ export async function uploadFile(url?: string, data?: FormData): Promise<Respons
         console.log(response);
         return response;
     }
-}
-
-export enum ECallType{
-    INSERT,
-    DELETE,
-    UPDATE,
-    SELECT
-}
-
-export function postCaller(dataToSend?: any, path?: string, callType?: ECallType): [(newData?: any, newUrl?: any, newType?: ECallType)=> Promise<any>, AbortController]{
-    const abortController = new AbortController();
-    let data = dataToSend;
-    let url = path;
-    let type = ECallType.SELECT;
-    if(callType) type = callType;
-
-    const fetchData = async (newData?: any,  newUrl?: string, newType?: ECallType)=>{
-        if(newUrl) url = newUrl;
-        if(newData) data = newData;
-        if(newType != null) type = newType; 
-        try{
-            return await postCall(data, url, type, abortController);
-        } catch(err){
-            console.log(err);
-            return null;
-        }
-    }
-    return [fetchData, abortController];
-}
-
-async function postCall(data: any, url: string, type: ECallType, abortController: AbortController){
-        const response = await fetch(def + url, {
-            method: 'POST',
-            mode: 'cors',
-            cache: 'no-cache',
-            credentials: 'same-origin', 
-            signal: abortController.signal,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            redirect: 'follow', 
-            referrerPolicy: 'no-referrer', 
-            body: JSON.stringify(data) 
-        });
-        if(type === ECallType.INSERT) return await handleInsert(response);
-        if(type === ECallType.SELECT) return await handleSelect(response);
-        if(type === ECallType.UPDATE || type === ECallType.DELETE) return handleDelete(response);
-        return null;
-}
-
-export function getCaller(url?: string): [(newUrl?: string)=> Promise<any>, AbortController]{
-    const abortController = new AbortController();
-    const fetchData = async (newUrl = url)=>{
-        if(newUrl) url = newUrl;
-        try{
-            return await getCall(url);
-        } catch(err){
-            console.log(err);
-            return null;
-        }
-    }
-    return [fetchData, abortController];
-}
-
-async function getCall(url: string): Promise<any>{
-    const response = await fetch(def + url, {
-        method: "GET",
-        cache: "no-cache",
-        credentials: "include"
-    });
-    if(response.ok){
-        return await response.json();
-    } 
-    return null; 
 }
 
 export function uploadCaller(url: string, data: FormData): [(newUrl: string, newData: FormData)=> Promise<boolean>, AbortController]{

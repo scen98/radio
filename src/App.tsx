@@ -6,8 +6,7 @@ import BillboardProvider from './BillboardProvider';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import Player, { EPlayMode } from './components/Player';
-import { useAsyncReference, useHeight } from './customHooks';
-import { getCaller } from './model/caller';
+import { useAsyncReference, useGET, useHeight } from './customHooks';
 import { displayTrackText, IApiTrackResponse, ITrack, trackFactory } from './model/track';
 import Admin from './pages/Admin';
 import Contact from './pages/Contact';
@@ -50,7 +49,7 @@ export const darkTheme = {
 
 function App() {
   const [currentWindowState, listenHeight] = useHeight([{ name: "normal", maxValue: 100000 }, { name: "mini", maxValue: 150 }]);
-  const [pageDataCaller, signal] = getCaller("/radio/api/pagedataapi.php");
+  const fetchData = useGET("/radio/api/pagedataapi.php");
   const [pageData, setPageData] = useAsyncReference([]); //így emlékszik a setInterval
   const [streamURL, setStreamURL] = useState("");
   const [playMode, setPlayMode] = useState<EPlayMode>(EPlayMode.Normal);
@@ -66,11 +65,10 @@ function App() {
       setTheme(lighTheme);
     }
     const timerId = setInterval(async () => {
-      const newTracks = trackFactory(await pageDataCaller("/radio/api/pagedataapi.php"));
+      const newTracks = trackFactory(await fetchData("/radio/api/pagedataapi.php"));
       if (toUpdate(newTracks)) setPageData(newTracks);
     }, 10 * 1000);
     return () => {
-      signal.abort();
       clearInterval(timerId);
     }
   }, []);
@@ -91,14 +89,14 @@ function App() {
   }
 
   const requestPageData = async () => {
-    const newPageData: IApiTrackResponse = await pageDataCaller("/radio/api/pagedataapi.php");
+    const newPageData: IApiTrackResponse = await fetchData("/radio/api/pagedataapi.php");
     if (newPageData != null) {
       setPageData(trackFactory(newPageData));
     }
   }
 
   const requestConfig = async () => {
-    const config = await pageDataCaller("/radio/api/config.json");
+    const config = await fetchData("/radio/api/config.json");
     if (config != null) {
       setStreamURL(config.streamURL);
     }

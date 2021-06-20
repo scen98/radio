@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Link } from "react-router-dom"
-import { useWidth } from '../customHooks';
 import MobileHeader from './MobileHeader';
 import { ITrack } from '../model/track';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon } from '@fortawesome/free-solid-svg-icons';
 import { faMoon as emptyMoon } from "@fortawesome/free-regular-svg-icons"
 import styled from 'styled-components'
+import { useWindow } from '../customHooks';
 
 interface IHeader{
     currentTrack: ITrack;
@@ -40,18 +40,11 @@ const TopNav = styled.div`
 `;
 
 export const Header: React.FC<IHeader> = ({currentTrack, nextTrack, isNightModeOn, setIsNightModeOn}) => { 
-    const [currentState, listen, cleanUp] = useWidth([{ name: "mobile", maxValue: 800 }, { name: "desktop", maxValue: 100000 }]);
-
-    useEffect(() => {
-        listen();
-        return ()=>{
-            cleanUp();
-        }
-    }, []);
+    const mobile = useWindow(800);
 
     return (
         <header>
-        {(currentState.name === "desktop") ?        
+        {!mobile ?        
         (<div className="header-grid">
             <Link to="/radio/">
                 <img src="/radio/page_elements/logo.png" className="logo" alt="Logo"/>

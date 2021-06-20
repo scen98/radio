@@ -18,13 +18,13 @@ interface IWeekSelection {
     title: any;
 }
 
-function getOneWeekBefore(date: Date) {
+const getOneWeekBefore = (date: Date) => {
     const newDate = new Date(date.getTime());
     newDate.setDate(newDate.getDate() - 7);
     return newDate;
 }
 
-function generateWeekSelection(){
+const generateWeekSelection = () =>{
     const weekEndings = getLastXWeekEndings(8);
     const addedWeeks: IWeekSelection[] = [];
     for(let i = 0; i < weekEndings.length; i++){
@@ -34,7 +34,7 @@ function generateWeekSelection(){
     return addedWeeks;
 }
 
-function createWeekSelection(index: number, weekEndings: Date[]){
+const createWeekSelection = (index: number, weekEndings: Date[]) => {
     const before = getOneWeekBefore(weekEndings[index]);
     const selection: IWeekSelection = {
         lastDayOfWeek: weekEndings[index],
@@ -78,7 +78,7 @@ export const WeeklyChart: React.FC<IWeeklyChart> = ({ tracks }) => {
         return max + 1;
     }
 
-    function CustomTooltip({ payload, label, active }) {
+    const CustomTooltip = ({ payload, label, active }) => {
         if (active) {
             const dayName = days.find(d => d.includes(label));
             const relevantDate = payload[0].payload.date;
@@ -99,7 +99,7 @@ export const WeeklyChart: React.FC<IWeeklyChart> = ({ tracks }) => {
         return null;
     }
 
-    function nextWeek(){
+    const nextWeek = () =>{
         const index = weeks.current.indexOf(selectedWeek);
         if(index === weeks.current.length - 1){         
             setSelectedWeek(weeks.current[0]);
@@ -108,7 +108,7 @@ export const WeeklyChart: React.FC<IWeeklyChart> = ({ tracks }) => {
         }
     }
 
-    function prevWeek(){
+    const prevWeek = () => {
         const index = weeks.current.indexOf(selectedWeek);
         if(index === 0){
             setSelectedWeek(weeks.current[weeks.current.length - 1]);

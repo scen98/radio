@@ -9,9 +9,9 @@ import { Link } from "react-router-dom"
 import { getBillboardByTitle, IBillboardInfo, searchBillboard } from '../model/billboardManager';
 import { BillboardContext } from '../BillboardProvider';
 import BillboardBox from './BillboardBox';
-import { getCaller } from '../model/caller';
 import WeeklyChart from './WeeklyChart';
 import extractColors from 'extract-colors'
+import { useGET } from '../customHooks';
 
 
 interface IExpandedTrack {
@@ -24,24 +24,31 @@ export const ExpandedTrack: React.FC<IExpandedTrack> = ({ track, onClick }) => {
     const [billboardInfo, setBillboardInfo] = useState<IBillboardInfo>({ hot: undefined, top: undefined, artist: undefined, allTimeArtist: undefined });
     const { hot, top, artists, allTimeArtists } = useContext(BillboardContext);
     const [displayBillboard, setDisplayBillboard] = useState(false);
-    const [getCall, signal] = getCaller();
+    const fetchData = useGET();
     const [tracks, setTracks] = useState<ITrack[]>([]);
     const [mainStyle, setMainStyle] = useState({ background: "", boxShadow: "", border: "" });
     const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
-        setImgSrc(getAlbumArt(track));
+        setImgSrc(getAlbumArt(track));        
     }, [track.trackId]);
 
     useEffect(() => {
-        // extractColors(imgSrc).then(colors => setMainColor(getMainColor(colors)));
+        imgRef.current.addEventListener("load", () => {
+            extractColors(imgSrc).then((colors) => {
+                setMainStyle(generateMainStyles(colors));
+            });
+        });
     }, [imgSrc]);
 
     function generateMainStyles(colors) {
         if(isTrackDefault(track)){
-            return { background: "rgba(114, 114, 114, 0.5)", boxShadow: "0 0 10px white", border: "0.5px solid white" };
+            return defaultTrackStyle();
         }
-        const newStyle = { background: "", boxShadow: "", border: "" }
+        if(colors.length === 1 && colors[0].hex === "#ffffff"){
+            return defaultTrackStyle();
+        }
+        const newStyle = { background: "", boxShadow: "", border: "" };
         if (colors.length > 2) {
             newStyle.background = `linear-gradient(to bottom, ${colors[0].hex}, ${colors[1].hex})`;
         } else {
@@ -50,6 +57,10 @@ export const ExpandedTrack: React.FC<IExpandedTrack> = ({ track, onClick }) => {
         newStyle.boxShadow = `0 0 10px ${colors[0].hex}`;
         newStyle.border = `0.5px solid ${colors[0].hex}`;
         return newStyle;
+    }
+
+    function defaultTrackStyle(){
+        return { background: "rgba(114, 114, 114, 0.5)", boxShadow: "0 0 10px white", border: "0.5px solid white" };
     }
 
     useEffect(() => {
@@ -68,17 +79,6 @@ export const ExpandedTrack: React.FC<IExpandedTrack> = ({ track, onClick }) => {
     }, [track.trackId]);
 
     useEffect(() => {
-        imgRef.current.addEventListener("load", () => {
-            extractColors(imgSrc).then((colors) => {
-                setMainStyle(generateMainStyles(colors));
-            });
-        })
-        return () => {
-            signal.abort();
-        }
-    }, []);
-
-    useEffect(() => {
         if (billboardInfo.hot != null || billboardInfo.artist != null || billboardInfo.top != null || billboardInfo.allTimeArtist != null) {
             setDisplayBillboard(true);
         } else {
@@ -87,17 +87,16 @@ export const ExpandedTrack: React.FC<IExpandedTrack> = ({ track, onClick }) => {
     }, [billboardInfo]);
 
     const requestTrackData = async () => {
-        const response: IApiTrackResponse = await getCall(`/radio/api/searchbyidapi.php?trackid=${track.trackId}&limit=500`);
+        const response: IApiTrackResponse = await fetchData(`/radio/api/searchbyidapi.php?trackid=${track.trackId}&limit=500`);
         if (response != null) {
             setTracks(trackFactory(response));
         }
     }
 
-
     return (
         <div className="expanded-track" style={mainStyle} >
             <div className="expanded-first-row">
-                <img ref={imgRef} onClick={onClick} src={imgSrc} alt={"album_art"} onError={() => { setImgSrc("/radio/page_elements/logo.png") }} className="track-img" />
+                <img ref={imgRef} onClick={onClick} src={imgSrc} alt={"album_art"} onError={()=>{ setImgSrc("/radio/page_elements/logo.png"); }} className="track-img" />
                 <div className="expanded-body">
                     <div className="expanded-info">
                         {track.artist !== "" && track.artist !== "Rádio 1" && track.artist !== "Radio 1" ?

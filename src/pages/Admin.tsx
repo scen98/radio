@@ -2,8 +2,8 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import AutoCompleteInput from '../components/AutoCompleteInput';
 import EditTrackRow from '../components/EditTrackRow';
-import { useAsyncReference, useScroll } from '../customHooks';
-import { getCaller, uploadFile } from '../model/caller'
+import { useAsyncReference, useGET, useScroll } from '../customHooks';
+import { uploadFile } from '../model/caller'
 import { ITrack, trackFactory } from '../model/track';
 
 export interface IEmitter{
@@ -13,7 +13,7 @@ export interface IEmitter{
 
 export default function Admin() {
     const [tracks, setTracks] = useAsyncReference<ITrack[]>([]);
-    const [trackCaller, signal] = getCaller();
+    const fetchData = useGET("");
     const [keyword, setKeyword] = useAsyncReference<string>("");
     const [autoComplete, setAutoComplete] = useState<string[]>([]);
     const perPage = 50;
@@ -24,9 +24,7 @@ export default function Admin() {
     const [showOnlyImageless, setShowOnlyImageless] = useState(false);
 
     useEffect(()=>{
-
         return ()=>{
-            signal.abort();
             removeScrollListener();
         }
     }, []);
@@ -44,7 +42,7 @@ export default function Admin() {
     }, [showOnlyImageless]);
 
     const requestTracks = async (search: string)=>{
-        const requestedTracks = await trackCaller(`/radio/api/searchbynameapi.php?term=${encodeURIComponent(search)}&limit=${perPage}&offset=${0}`);
+        const requestedTracks = await fetchData(`/radio/api/searchbynameapi.php?term=${encodeURIComponent(search)}&limit=${perPage}&offset=${0}`);
         if(requestedTracks){
             const newTracks = trackFactory(requestedTracks);
             setTracks(newTracks);
@@ -53,7 +51,7 @@ export default function Admin() {
     }
 
     const requestImagelessTracks = async ()=>{
-        const requestedTracks = await trackCaller("/radio/api/noimgtracksapi.php");
+        const requestedTracks = await fetchData("/radio/api/noimgtracksapi.php");
         if(requestedTracks){
             setTracks(trackFactory(requestedTracks));
         }
@@ -61,7 +59,7 @@ export default function Admin() {
 
     async function requestMoreTracks(){
         removeScrollListener();
-        const requestedTracks = await trackCaller(`/radio/api/searchbynameapi.php?term=${encodeURIComponent(keyword.current)}&limit=${perPage}&offset=${tracks.current.length}`);
+        const requestedTracks = await fetchData(`/radio/api/searchbynameapi.php?term=${encodeURIComponent(keyword.current)}&limit=${perPage}&offset=${tracks.current.length}`);
         if(requestedTracks){
             const newTracks = trackFactory(requestedTracks);
             setTracks([ ...tracks.current, ...newTracks ]);
@@ -71,7 +69,7 @@ export default function Admin() {
 
     const requestAutoComplete = async ()=>{
         if(keyword.current != null && keyword.current.length > 3){
-            const auto = await trackCaller(`/radio/api/autocomplete.php?limit=${10}&keyword=${keyword.current}`); 
+            const auto = await fetchData(`/radio/api/autocomplete.php?limit=${10}&keyword=${keyword.current}`); 
             if(auto != null) {
                 const distinct = [...new Set(auto.records)] as string[]; //ts :))))
                 setAutoComplete(distinct);

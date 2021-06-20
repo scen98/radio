@@ -112,29 +112,36 @@ export interface IWindowState {
     maxValue: number;
 }
 
-export function useWidth(defWindowStates: IWindowState[]) {
-    const windowsStates = useRef(defWindowStates.sort(compareWindowStates));
-    const [currentWindowState, setCurrentWindowState] = useState(windowsStates.current.find(w => w.maxValue > window.innerWidth));
-    const listen = () => {
-        window.addEventListener("resize", () => {
-            windowStateSetter();
-        });
-    }
-    const cleanUpListener = () => {
-        window.removeEventListener("resize", () => {
-            windowStateSetter();
-        });
-    }
-    const windowStateSetter = () => {
-        setCurrentWindowState(windowsStates.current.find(w => w.maxValue > window.innerWidth));
-    }
-    return [currentWindowState, listen, cleanUpListener] as const;
-}
-
 function compareWindowStates(wstate1: IWindowState, wstate2: IWindowState) {
     if (wstate1.maxValue < wstate2.maxValue) return -1;
     if (wstate1.maxValue > wstate2.maxValue) return 1;
     return 0;
+}
+
+export function useWindow(maxMobile: number){
+    const [isMobile, setIsMobile] = useState<boolean>(maxMobile >= window.innerWidth);
+    const listen = ()=>{
+        window.addEventListener("resize", ()=>{
+            windowStateSetter();
+        });
+    }
+    const cleanUpListener = ()=>{
+        window.removeEventListener("resize", ()=>{
+            windowStateSetter();
+        });
+    }
+    const windowStateSetter = ()=>{
+        setIsMobile(maxMobile >= window.innerWidth);
+    }
+
+    useEffect(()=>{
+        listen();
+        return ()=>{
+            cleanUpListener();
+        }
+    }, []);
+
+    return isMobile;
 }
 
 export function useHeight(defWindowStates: IWindowState[]) {
@@ -183,31 +190,36 @@ export function useRatio<T>(ratio: number) {
     return [ref as MutableRefObject<T>, listen, cleanUp, setHeight] as const;
 }
 
-export function useFetch<T>(url: string, onError: () => void) {
-    const [data, setData] = useState<T>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
 
-    useEffect(() => {
-        setData(null);
-        const signal = new AbortController();
-
-        async function fetchData() {
-            setIsLoading(true);
-            const result = await fetch(url, signal);
-            if (result.ok) {
-                setData(await result.json());
-            } else {
-                onError();
-                setIsError(true);
-            }
-            setIsLoading(false);
+export function useGET(url?: string){
+    const abortController = new AbortController();
+    const fetchData = async (newUrl = url)=>{
+        if(newUrl) url = newUrl;
+        try{
+            return await getCall(url);
+        } catch(err){
+            console.log(err);
+            return null;
         }
-        fetchData();
-        return () => {
-            signal.abort();
-        }
-    }, [url]);
+    }
 
-    return { data, isLoading, isError };
+    useEffect(()=>{
+        return ()=>{
+            abortController.abort();
+        }
+    }, []);
+
+    return fetchData;
+}
+
+async function getCall(url: string): Promise<any>{
+    const response = await fetch(url, {
+        method: "GET",
+        cache: "no-cache",
+        credentials: "include"
+    });
+    if(response.ok){
+        return await response.json();
+    } 
+    return null; 
 }

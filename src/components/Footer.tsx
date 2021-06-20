@@ -1,17 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useWidth } from '../customHooks'
-
 export default function Footer() {
-	const [windowState, listen, cleanUp] = useWidth([{ name: "mobile", maxValue: 800 }, { name: "desktop", maxValue: 100000 }]);
-	const [mainClass, setMainClass] = useState("warningdiv");
-	useEffect(()=>{
-		listen();
-		return ()=>{
-			cleanUp();
-		}
-	}, []);
     return (
-        <div className={mainClass}>
+        <div className="warningdiv">
 			<div className="footer-grid">
 				<div className="warningcell">
 					<h1>Figyelem!</h1>

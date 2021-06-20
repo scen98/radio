@@ -1,26 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, Fragment } from 'react'
-import { useCutter } from '../customHooks';
 import { displayTrackText, getThumbnailPath, ITrack } from '../model/track'
 import dateFormat from "dateformat"
 import ExpandedTrack from './ExpandedTrack';
 import styled from 'styled-components'
 
-interface ITrackRow{
+interface ITrackRow {
     track: ITrack;
     dateType?: DateType;
     textLength?: number;
     alt?: boolean;
 }
 
-export enum DateType{
+export enum DateType {
     full,
     partial,
     none
 }
 
 const TrackRowTitle = styled.div`
-    color: ${props=> props.theme.color};
+    color: ${props => props.theme.color};
     background: ${props => props.theme.secondaryRow};
     word-wrap: break-word;
     font-weight: bolder;
@@ -43,7 +42,7 @@ const TrackRowTitle = styled.div`
 `;
 
 const SimpleTrackRow = styled.div`
-   color: ${props=> props.theme.color};
+   color: ${props => props.theme.color};
     background: ${props => props.theme.secondaryRow};
     word-wrap: break-word;
     text-align: center;
@@ -70,9 +69,8 @@ const SimpleTrackRow = styled.div`
 `;
 
 const TrackRowTime = styled.div`
-     height: 30px;
+    height: 30px;
     color: #fff;
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     text-align: center;
     font-style: italic;
     background: ${props => props.theme.time};
@@ -82,22 +80,18 @@ const TrackRowTime = styled.div`
     }
 `;
 
-export const TrackRow: React.FC<ITrackRow> = ({ track, dateType, textLength = 200, alt = false })=> {
+export const TrackRow: React.FC<ITrackRow> = ({ track, dateType }) => {
     const [imgSrc, setImgSrc] = useState("/radio/page_elements/logo.png");
-    const [displayText, isDisplayCut, cutDisplayText] = useCutter("", textLength);
     const [isExpanded, setIsExpanded] = useState(false);
     const [mainClass, setMainClass] = useState("track-row");
-    
-    useEffect(()=>{
+
+    useEffect(() => {
         const newSrc = getThumbnailPath(track);
-        if(newSrc !== imgSrc) {
-            setImgSrc(newSrc);         
-        }
-        cutDisplayText(displayTrackText(track), textLength);
+        setImgSrc(newSrc);
     }, [track.trackId]);
 
-    useEffect(()=>{
-        if(dateType === DateType.none) {
+    useEffect(() => {
+        if (dateType === DateType.none) {
             setMainClass("track-row-title simple-track-row")
         } else {
             setMainClass("track-row-title");
@@ -106,30 +100,30 @@ export const TrackRow: React.FC<ITrackRow> = ({ track, dateType, textLength = 20
 
     return (
         <Fragment>
-        {isExpanded ?
-        (<ExpandedTrack track={track} onClick={()=>{ setIsExpanded(false) }} />):
-        (<div onClick={()=>{ setIsExpanded(true) }} className="track-row">
-            <img src={imgSrc} alt={"album_art"} onError={()=>{ setImgSrc("/radio/page_elements/logo.png") }} /> 
-            <div className="track-row-table">
-                {dateType === DateType.none ?
-                (<SimpleTrackRow>
-                    <p>{displayText}</p>
-                </SimpleTrackRow>):
-                (<TrackRowTitle className={mainClass}>
-                    <p >{displayText}</p>
-                </TrackRowTitle>)}
-                
-                {dateType !== DateType.none ?
-                (<Fragment> {track != null ?
-                    (<TrackRowTime><p>
-                        {dateType === DateType.partial ?
-                        (<Fragment>{track.datePlayed != null ? dateFormat(track.datePlayed, "HH:MM") : dateFormat(track.dateAdded, "HH:MM")}</Fragment>): 
-                        (<Fragment>{track.datePlayed != null ? dateFormat(track.datePlayed, "yyyy. mm. dd. HH:MM") : dateFormat(track.dateAdded, "yyyy. mm. dd. HH:MM")}</Fragment>)} 
-                    </p></TrackRowTime>):
-                    (<TrackRowTime className="track-row-time"><p>...</p></TrackRowTime>)}</Fragment>):
-                (<Fragment></Fragment>)}
-            </div>         
-        </div>)}
+            {isExpanded ?
+                (<ExpandedTrack track={track} onClick={() => { setIsExpanded(false) }} />) :
+                (<div onClick={() => { setIsExpanded(true) }} className="track-row">
+                    <img src={imgSrc} alt={"album_art"} onError={() => { setImgSrc("/radio/page_elements/logo.png") }} />
+                    <div className="track-row-table">
+                        {dateType === DateType.none ?
+                            (<SimpleTrackRow>
+                                <p>{displayTrackText(track)}</p>
+                            </SimpleTrackRow>) :
+                            (<TrackRowTitle className={mainClass}>
+                                <p >{displayTrackText(track)}</p>
+                            </TrackRowTitle>)}
+
+                        {dateType !== DateType.none ?
+                            (<Fragment> {track != null ?
+                                (<TrackRowTime><p>
+                                    {dateType === DateType.partial ?
+                                        (<Fragment>{track.datePlayed != null ? dateFormat(track.datePlayed, "HH:MM") : dateFormat(track.dateAdded, "HH:MM")}</Fragment>) :
+                                        (<Fragment>{track.datePlayed != null ? dateFormat(track.datePlayed, "yyyy. mm. dd. HH:MM") : dateFormat(track.dateAdded, "yyyy. mm. dd. HH:MM")}</Fragment>)}
+                                </p></TrackRowTime>) :
+                                (<TrackRowTime className="track-row-time"><p>...</p></TrackRowTime>)}</Fragment>) :
+                            (<Fragment></Fragment>)}
+                    </div>
+                </div>)}
         </Fragment>
     )
 }
